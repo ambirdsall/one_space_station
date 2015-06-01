@@ -1,9 +1,11 @@
 class ConversionsController < ApplicationController
   def convert
-    render status: :bad_request, text: I18n.t("convert.bad_request") unless params[:text]
+    if params[:text]
+      @original_and_converted_text = TextConverter.new(params[:text]).text_versions
 
-    @original_and_converted_text = TextConverter.new(params[:text]).text_versions
-
-    render json: @original_and_converted_text
+      render json: @original_and_converted_text
+    else
+      render status: :bad_request, text: I18n.t("convert.bad_request")
+    end
   end
 end

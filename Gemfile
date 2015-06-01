@@ -31,6 +31,4 @@ group :development do
   gem 'hookup'
 end
 
-gem 'haml'
-gem 'haml-rails'
-gem 'zurb-foundation'
+gem 'sinatra'

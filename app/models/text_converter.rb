@@ -6,6 +6,14 @@ class TextConverter
     @original_text = text
   end
 
+  def text_versions
+    {
+      original_text: @original_text,
+      converted_text: converted_text
+    }
+  end
+  protected
+
   def converted_text
     @converted_text ||= convert_text
   end

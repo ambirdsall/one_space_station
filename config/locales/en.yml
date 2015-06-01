@@ -20,4 +20,5 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  convert:
+    bad_request: "You must include a text parameter in the query string, as: '/convert?text=This%20is%20my%20text.%20%20Please%20convert%20the%20spacing.'."

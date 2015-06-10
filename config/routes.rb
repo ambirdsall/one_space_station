@@ -1,7 +1,7 @@
-require_relative '../interface'
+require_dependency "#{Rails.root}/lib/interface/interface"
 
 Rails.application.routes.draw do
-  mount Interface.new => '/'
+  root to: Interface
 
   get '/convert', to: 'conversions#convert', as: :conversion
 end

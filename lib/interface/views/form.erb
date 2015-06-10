@@ -1,0 +1,96 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>hello</title>
+    <meta name="description" content="One Space Station Interface">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <style>
+      .red { background-color: red; }
+      .green { background-color: green; }
+    </style>
+  </head>
+
+  <body>
+    <h1>BEING AN APPLICATION FOR THE CONVERSION OF SPACES BETWEEN SENTENCES</h1>
+
+    <form id="conversion_form" accept-charset="UTF-8">
+      <legend>
+        Text to convert:<br/>
+      </legend>
+      <textarea id="text" rows="9" cols="100"></textarea><br/>
+      <input id="submit_text" type="submit" value="Convert away!" />
+    </form>
+
+    <div id="results">
+      <pre>
+        <p id="original_text"></p>
+        <p id="converted_text"></p>
+        <p id="spaces_corrected"></p>
+      </pre>
+    </div>
+
+    <script type="text/javascript">
+var originalTextDisplay             = $("#original_text"),
+    convertedTextDisplay            = $("#converted_text"),
+    metadataDisplay                 = $("#spaces_corrected"),
+    interSentenceSpacesMatcher      = /(\S\.)(\s+)(?=\S)/g;
+
+function format(text, correctedSpaces, color) {
+  // matches gives an array of matches, each a string like "x. ", where x is the
+  // last character before the punctuation; the number of spaces varies.
+  var spacesMatcher     = /(\S[\.\?\!])(\s+)/g,
+  formattedText         = "",
+  currentMatchIndex     = 0;
+
+  return text.replace(spacesMatcher, function(match, p1, p2) {
+    if ( correctedSpaces.indexOf(currentMatchIndex) !== -1 ) {
+      ++currentMatchIndex;
+      return p1 + "<span class='"+ color + "'>" + p2 + "</span>";
+    } else {
+      ++currentMatchIndex;
+      return match;
+    }
+  });
+}
+
+function describeMetadata(metadata) {
+  // metadata is an array of indexes, so increment all members.
+  var formattedMetadata = metadata.map(function(n){ return ++n })
+
+  if ( metadata.length === 0 ) {
+    return "No spacing changed."
+  } else if ( metadata.length === 1) {
+    return "Spacing changed after sentence " + formattedMetadata + "."
+  } else {
+    return "Spacing changed after sentences " + formattedMetadata + "."
+  }
+}
+
+  $('#submit_text').click(function(e){
+    e.preventDefault();
+    $.ajax({
+      url: "/convert",
+      data: {
+        text: $("#text").val()
+      }
+    }).complete(function(result) {
+      // the values returned by the API:
+      var returnedOriginal       = result.responseJSON.original_text,
+          returnedConverted      = result.responseJSON.converted_text,
+          correctedSpaces        = result.responseJSON.spaces_corrected,
+      // and formatted for display:
+          formattedOriginal      = format(returnedOriginal, correctedSpaces, "red"),
+          formattedConverted     = format(returnedConverted, correctedSpaces, "green"),
+          spaceChangeDescription = describeMetadata(correctedSpaces);
+
+      originalTextDisplay.html("Original text:  " + formattedOriginal);
+      convertedTextDisplay.html("Converted text: " + formattedConverted);
+      metadataDisplay.html(spaceChangeDescription);
+    });
+  })
+    </script>
+  </body>
+</html>

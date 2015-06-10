@@ -1,5 +1,5 @@
 class TextConverter
-  INTER_SENTENCE_SPACES_MATCHER = /(?<=\S\.)\s+(?=\S)/
+  INTER_SENTENCE_SPACES_MATCHER = /(?<=\S[\.\?\!])\s+(?=\S)/
   CORRECT_SPACING = " "
 
   def initialize(text)
@@ -26,8 +26,8 @@ class TextConverter
   def convert_text
     matches = 0
     @original_text.gsub(INTER_SENTENCE_SPACES_MATCHER) do |match|
-      matches += 1
       @spaces_corrected << matches if match != CORRECT_SPACING
+      matches += 1
 
       CORRECT_SPACING
     end
